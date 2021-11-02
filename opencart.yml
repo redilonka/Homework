@@ -33,6 +33,7 @@ services:
       - OPENCART_DATABASE_USER=bn_opencart
       - OPENCART_DATABASE_NAME=bitnami_opencart
       - ALLOW_EMPTY_PASSWORD=yes
+      - OPENCART_PASSWORD=1234
     volumes:
       - 'opencart_data:/bitnami/opencart'
       - 'opencart_storage_data:/bitnami/opencart_storage/'
