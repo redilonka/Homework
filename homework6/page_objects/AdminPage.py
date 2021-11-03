@@ -1,10 +1,14 @@
 from time import sleep
 
+import allure
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 
 from homework6.page_objects.BasePage import BasePage
 from homework6.elements.NewUserForm import NewUserForm
+from homework6.logger_obj import logging
+
+log = logging.getLogger("AdminPage logger")
 
 
 class AdminPage(BasePage):
@@ -37,6 +41,7 @@ class AdminPage(BasePage):
 
     USER_CHECKBOX =            (By.XPATH, "//table/tbody//td[contains(text(), '{}')]")
 
+    @allure.step
     def check_elements(self):
         self.wait.until(EC.visibility_of_element_located(self.PANEL_DEFAULT), "Panel main element loading error")
         self.wait.until(EC.visibility_of_element_located(self.HELP_BLOCK), "Help block loading error")
@@ -44,6 +49,7 @@ class AdminPage(BasePage):
         self.wait.until(EC.visibility_of_element_located(self.PASSWORD), "Input password element loading error")
         self.wait.until(EC.visibility_of_element_located(self.SUBMIT), "Login form submit loading error")
 
+    @allure.step
     def login(self, username, password):
         username_input = self.wait.until(EC.visibility_of_element_located(self.USERNAME), "Input username element loading error")
         password_input = self.wait.until(EC.visibility_of_element_located(self.PASSWORD), "Input password element loading error")
@@ -53,10 +59,12 @@ class AdminPage(BasePage):
         password_input.send_keys(password)
         submit.click()
 
+    @allure.step
     def open_products_page(self):
         self.wait.until(EC.visibility_of_element_located(self.MENU_CATALOG), "Menu catalog loading error").click()
         self.wait.until(EC.visibility_of_element_located(self.PRODUCTS), "Products menu can't be find").click()
 
+    @allure.step
     def add_new_product(self, name="Test name", meta_tag="Test meta", model="Test model"):
         self.wait.until(EC.visibility_of_element_located(self.ADD_NEW), "Can't locate Add New button").click()
         self.wait.until(EC.visibility_of_element_located(
@@ -69,6 +77,7 @@ class AdminPage(BasePage):
         
         self.wait.until(EC.visibility_of_element_located(self.SAVE_BTN), "Can't locate Save button").click()
 
+    @allure.step
     def delete_product(self, name="Test name"):
         self.wait.until(EC.visibility_of_element_located(
             self.FILTER_BY_NAME), "Can't locate product name filter input").send_keys(name)
@@ -82,11 +91,13 @@ class AdminPage(BasePage):
 
         assert "Success" in success_msg.text
 
+    @allure.step
     def open_menu_users(self):
         self.wait.until(EC.visibility_of_element_located(self.MENU_SYSTEM), "Can't locate button filter").click()
         self.wait.until(EC.visibility_of_element_located(self.MENU_USERS), "Can't open Users menu").click()
         self.wait.until(EC.visibility_of_element_located(self.SUBMENU_USERS), "Can't open Useers sub-menu").click()
 
+    @allure.step
     def add_new_user(self, username, password, email, first_name, last_name):
         self.wait.until(EC.visibility_of_element_located(self.ADD_NEW), "Can't locate Add New button").click()
 
@@ -100,15 +111,18 @@ class AdminPage(BasePage):
 
         self.wait.until(EC.visibility_of_element_located(self.SAVE_BTN), "Can't locate Save button").click()
 
+        log.info(f"Create user {username} with password {password}")
+
+    @allure.step
     def delete_user(self, username):
         # Inject username into XPATH
         USER_CHECKBOX = self.USER_CHECKBOX[0], self.USER_CHECKBOX[1].format(username)
 
-        self.wait.until(
-            EC.visibility_of_element_located(USER_CHECKBOX),
-            "Can't locate user item").find_element_by_xpath("../td").click()
+        self._element(USER_CHECKBOX).find_element_by_xpath("../td").click()
 
         sleep(1)  # Can't handle :after for checkbox properly
         self.wait.until(EC.visibility_of_element_located(self.DELETE_BTN), "Can't locate delete button").click()
         sleep(1)  # Have to wait some time for alert - don't understand why yet
         self.browser.switch_to.alert.accept()
+
+        log.info(f"Delete user {username}")

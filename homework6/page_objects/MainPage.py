@@ -1,7 +1,13 @@
+import logging
+
+import allure
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 
 from homework6.page_objects.BasePage import BasePage
+
+
+log = logging.getLogger()
 
 
 class MainPage(BasePage):
@@ -21,8 +27,9 @@ class MainPage(BasePage):
     IMAC_DROPDOWN =     (By.CSS_SELECTOR, "ul.navbar-nav > li.dropdown:nth-child(1) > div.dropdown-menu > div.dropdown-inner > ul.list-unstyled > li:nth-child(2)")
     ITEM_THUMBMAIL =    (By.CSS_SELECTOR, "div.product-thumb > div.image")
 
-
+    @allure.step
     def check_elements(self):
+        log.info("Checking required elements on main page")
         self.wait.until(EC.visibility_of_element_located(self.SEARCH), "Search element is not located")
         self.wait.until(EC.visibility_of_element_located(self.CART), "Cart is not located")
         self.wait.until(EC.visibility_of_element_located(self.MENU), "Footer links are absent")
@@ -30,27 +37,32 @@ class MainPage(BasePage):
         self.wait.until(EC.visibility_of_element_located(self.COMMON_HOME), "Common home element is absent")
         self.wait.until(EC.visibility_of_element_located(self.FOOTER), "Footer loading error")
 
+    @allure.step
     def check_selected_currency(self, currency):
         cart = self.wait.until(EC.visibility_of_element_located(self.CART), "Cart is not located")
         cart_total = cart.find_element_by_id("cart-total")
 
         assert currency in cart_total.text
 
+    @allure.step
     def open_login_page(self):
         self.wait.until(EC.visibility_of_element_located(self.ACCOUNT_DROPDOWN),
             "Account dropdown is not located").click()
         self.wait.until(EC.visibility_of_element_located(self.LOGIN_LINK)).click()
     
+    @allure.step
     def open_cart_page(self):
         self.wait.until(EC.visibility_of_element_located(self.SHOPPING_CART), 
             "Cart element is not located").click()
 
+    @allure.step
     def open_desktops(self):
         self.wait.until(EC.visibility_of_element_located(self.DESKTOPS_DROPDOWN),
             "Desktop dropdown is not located").click()
         self.wait.until(EC.visibility_of_element_located(self.DESKTOPS_SEE_ALL), 
             "Desktop see all dropdown is not located").click()
 
+    @allure.step
     def open_imac_page(self):
         self.wait.until(EC.visibility_of_element_located(self.DESKTOPS_DROPDOWN),
             "Desktop dropdown is not located").click()

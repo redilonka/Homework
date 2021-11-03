@@ -2,6 +2,11 @@ from selenium.webdriver.support.wait import WebDriverWait
 from selenium.common.exceptions import TimeoutException
 from selenium.webdriver.support import expected_conditions as EC
 
+from homework6.logger_obj import logging
+
+
+log = logging.getLogger("Pages logger")
+
 
 class BasePage:
     TIMEOUT = 10
@@ -14,6 +19,7 @@ class BasePage:
         try:
             return WebDriverWait(self.browser, self.TIMEOUT).until(EC.visibility_of_element_located(locator))
         except TimeoutException:
+            log.warn(f"Cant find element by locator: {locator}")
             raise AssertionError("Cant find element by locator: {}".format(locator))
 
     def _element(self, locator: tuple):
