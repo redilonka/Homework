@@ -139,3 +139,6 @@ reference.json
 
 # Allure reports
 reports/
+
+# Screenshots
+screenshots/*.png

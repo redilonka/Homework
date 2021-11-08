@@ -1,3 +1,7 @@
+import os
+from datetime import datetime
+
+import allure
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.common.exceptions import TimeoutException
 from selenium.webdriver.support import expected_conditions as EC
@@ -19,7 +23,12 @@ class BasePage:
         try:
             return WebDriverWait(self.browser, self.TIMEOUT).until(EC.visibility_of_element_located(locator))
         except TimeoutException:
-            log.warn(f"Cant find element by locator: {locator}")
+            log.warning(f"Cant find element by locator: {locator}")
+            now = datetime.now()
+            filename = f"screenshots/{now.strftime('%m-%d-%Y-%H:%M:%S')}.png"
+            self.browser.get_screenshot_as_file(f"{filename}")
+            allure.attach.file(f"{os.getcwd()}/{filename}", 'screenshot', attachment_type="image/png")
+
             raise AssertionError("Cant find element by locator: {}".format(locator))
 
     def _element(self, locator: tuple):
