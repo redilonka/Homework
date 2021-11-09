@@ -24,6 +24,7 @@ def url(request):
 @pytest.fixture(scope="module")
 def browser(request):
     browser = request.config.getoption("--browser")
+    url = request.config.getoption("--url")
 
     if browser == 'chrome':
         driver = webdriver.Chrome(ChromeDriverManager().install())
@@ -34,6 +35,8 @@ def browser(request):
     else:
         # default is Chrome
         driver = webdriver.Chrome(ChromeDriverManager().install())
+    
+    driver.get(url)
 
     yield driver
 

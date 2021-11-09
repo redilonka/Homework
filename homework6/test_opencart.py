@@ -1,92 +1,98 @@
 from urllib.parse import urljoin
 
-from selenium.webdriver.common.by import By
-from selenium.webdriver.support.wait import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
+from homework6.page_objects.MainPage import MainPage
+from homework6.page_objects.DesktopsPage import DesktopsPage
+from homework6.page_objects.LoginPage import LoginPage
+from homework6.page_objects.CartPage import CartPage
+from homework6.page_objects.ItemPage import ItemPage
+from homework6.page_objects.AdminPage import AdminPage
+from homework6.elements.CurrencySelector import CurrencySelector
 
 
-def test_main_page(browser, url):
+def test_main_page(browser):
     """Open main opencart page"""
-    browser.get(url)
-
-    wait = WebDriverWait(browser, 10, poll_frequency=1)
-
-    wait.until(EC.visibility_of_element_located((By.ID, "search")), "Search element is not located")
-    wait.until(EC.visibility_of_element_located((By.ID, "cart")), "Cart is not located")
-    wait.until(EC.visibility_of_element_located((By.ID, "menu")), "Footer links are absent")
-    wait.until(EC.visibility_of_element_located((By.ID, "content")), "Content block is absent")
-    wait.until(EC.visibility_of_element_located((By.ID, "common-home")), "Common home element is absent")
-    wait.until(EC.visibility_of_element_located((By.CSS_SELECTOR, "footer")), "Footer loading error")
+    MainPage(browser).check_elements()
 
 
 def test_desktops_page(browser, url):
     """Open desktops opencart page"""
-    browser.get(urljoin(url, "/desktops"))
-
-    wait = WebDriverWait(browser, 10, poll_frequency=1)
-
-    wait.until(EC.visibility_of_element_located((By.CLASS_NAME, "breadcrumb")), "Breadcrumb loading error")
-    wait.until(EC.visibility_of_element_located((By.CLASS_NAME, "list-group")), "List group loading error")
-    wait.until(EC.visibility_of_element_located((By.ID, "content")), "Content loading error")
-    wait.until(EC.visibility_of_element_located((By.ID, "compare-total")), "Compare element loading error")
-    wait.until(EC.visibility_of_element_located((By.CSS_SELECTOR, "footer")), "Footer loading error")
+    MainPage(browser).open_desktops()
+    DesktopsPage(browser).check_elements()
 
 
 def test_login_page(browser, url):
     """Open login opencart page"""
-    browser.get(urljoin(url, "/index.php?route=account/login"))
-
-    wait = WebDriverWait(browser, 10, poll_frequency=1)
-
-    wait.until(EC.visibility_of_element_located((By.ID, "search")), "Search element is not located")
-    wait.until(EC.visibility_of_element_located((By.ID, "cart")), "Cart is not located")
-    wait.until(EC.visibility_of_element_located((By.ID, "menu")), "Footer links are absent")
-    wait.until(EC.visibility_of_element_located((By.ID, "content")), "Content block is absent")
-    wait.until(EC.visibility_of_element_located((By.ID, "account-login")), "Account login holder loading error")
-    wait.until(EC.visibility_of_element_located((By.CSS_SELECTOR, "footer")), "Footer loading error")
+    MainPage(browser).open_login_page()
+    LoginPage(browser).check_elements()
 
 
-def test_cart_page(browser, url):
+def test_cart_page(browser):
     """Open cart page"""
-    browser.get(urljoin(url, "/index.php?route=checkout/cart"))
-
-    wait = WebDriverWait(browser, 10, poll_frequency=1)
-
-    wait.until(EC.visibility_of_element_located((By.ID, "search")), "Search element is not located")
-    wait.until(EC.visibility_of_element_located((By.ID, "cart")), "Cart is not located")
-    wait.until(EC.visibility_of_element_located((By.ID, "menu")), "Footer links are absent")
-    wait.until(EC.visibility_of_element_located((By.ID, "content")), "Content block is absent")
-    el = wait.until(EC.visibility_of_element_located(
-        (By.CSS_SELECTOR, "#content > p")), "Shoring cart empty message not found")
-    assert el.text == "Your shopping cart is empty!"
+    MainPage(browser).open_cart_page()
+    CartPage(browser).check_elements()
 
 
 def test_item_page(browser, url):
     """Open particular item"""
-    browser.get(urljoin(url, "/desktops/mac/imac"))
+    MainPage(browser).open_imac_page()
+    ItemPage(browser).check_elements()
 
-    wait = WebDriverWait(browser, 10, poll_frequency=1)
 
-    wait.until(EC.visibility_of_element_located((By.ID, "search")), "Search element is not located")
-    wait.until(EC.visibility_of_element_located((By.ID, "cart")), "Cart is not located")
-    wait.until(EC.visibility_of_element_located((By.ID, "menu")), "Footer links are absent")
-    wait.until(EC.visibility_of_element_located((By.ID, "content")), "Content block is absent")
-    wait.until(EC.visibility_of_element_located((By.CSS_SELECTOR, "#content .thumbnails")), "Thumbnails block is absent")
-    wait.until(EC.visibility_of_element_located(
-        (By.CSS_SELECTOR, "[data-original-title='Add to Wish List']")), "Add to wish list element is absent")
-    wait.until(EC.visibility_of_element_located(
-        (By.CSS_SELECTOR, "[data-original-title='Compare this Product']")), "Compate this Product element is absent")
-    wait.until(EC.visibility_of_element_located((By.CSS_SELECTOR, "footer")), "Footer loading error")
+def test_change_currency(browser):
+    main_page = MainPage(browser)
+
+    currency_selector = CurrencySelector(browser)
+    currency_selector.open()
+    currency_selector.select(CurrencySelector.EUR)
+
+    main_page.check_selected_currency(CurrencySelector.EUR_SIGN)
 
 
 def test_admin_page(browser, url):
     """Open admin page"""
     browser.get(urljoin(url, "/admin"))
 
-    wait = WebDriverWait(browser, 10, poll_frequency=1)
+    AdminPage(browser).check_elements()
 
-    wait.until(EC.visibility_of_element_located((By.CLASS_NAME, "panel-default")), "Panel main element loading error")
-    wait.until(EC.visibility_of_element_located((By.CLASS_NAME, "help-block")), "Help block loading error")
-    wait.until(EC.visibility_of_element_located((By.ID, "input-username")), "Input username element loading error")
-    wait.until(EC.visibility_of_element_located((By.ID, "input-password")), "Input password element loading error")
-    wait.until(EC.visibility_of_element_located((By.CSS_SELECTOR, "button[type='submit']")), "Login form submit loading error")
+
+def test_add_product(browser, url):
+    browser.get(urljoin(url, "/admin"))
+
+    admin_page = AdminPage(browser)
+    admin_page.login("user", "1234")
+    admin_page.open_products_page()
+    admin_page.add_new_product("Test name", "Test meta", "Test model")
+
+
+def test_delete_product(browser, url):
+    browser.get(urljoin(url, "/admin"))
+
+    admin_page = AdminPage(browser)
+    admin_page.login("user", "1234")
+    admin_page.open_products_page()
+    admin_page.delete_product("Test name")
+
+
+def test_add_user(browser, url):
+    browser.get(urljoin(url, "/admin"))
+
+    admin_page = AdminPage(browser)
+    admin_page.login("user", "1234")
+
+    admin_page.open_menu_users()
+    admin_page.add_new_user(
+        username="new_user",
+        password="1234",
+        email="new_user@email.com",
+        first_name="New User first",
+        last_name="New User last")
+
+
+def test_delete_user(browser, url):
+    browser.get(urljoin(url, "/admin"))
+
+    admin_page = AdminPage(browser)
+    admin_page.login("user", "1234")
+
+    admin_page.open_menu_users()
+    admin_page.delete_user(username="new_user")
