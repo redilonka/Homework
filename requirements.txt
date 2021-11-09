@@ -1,2 +1,4 @@
-pytest
-requests
+pytest==6.2.4
+requests==2.26.0
+webdriver-manager==3.5.1
+selenium==4.0.0
