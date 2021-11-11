@@ -135,3 +135,10 @@ dmypy.json
 users.json
 books.csv
 reference.json
+
+
+# Allure reports
+reports/
+
+# Screenshots
+screenshots/*.png

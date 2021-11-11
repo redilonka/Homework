@@ -1,3 +1,4 @@
+import allure
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 
@@ -13,6 +14,7 @@ class DesktopsPage(BasePage):
     COMPARE_TOTAL = (By.ID, "compare-total")
     FOOTER =        (By.CSS_SELECTOR, "footer")
 
+    @allure.step
     def check_elements(self):
         self.wait.until(EC.visibility_of_element_located(self.BREADCRUMPS), "Breadcrumb loading error")
         self.wait.until(EC.visibility_of_element_located(self.LIST_GROUP), "List group loading error")

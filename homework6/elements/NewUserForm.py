@@ -1,3 +1,4 @@
+import allure
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.select import Select
 
@@ -13,7 +14,9 @@ class NewUserForm(BasePage):
     CONFIRM = (By.CSS_SELECTOR, "input[type='password'][name='confirm']")
     STATUSES = (By.ID, "input-status")
 
+    @allure.step
     def fill(self, username, password, email, first_name, last_name):
+        """Fill the form with User details"""
         self._element(self.USERNAME).send_keys(username)
         self._element(self.FIRST_NAME).send_keys(first_name)
         self._element(self.LAST_NAME).send_keys(last_name)
@@ -23,10 +26,14 @@ class NewUserForm(BasePage):
 
         return self
 
+    @allure.step
     def activate(self):
+        """Activating User"""
         select = Select(self._element(self.STATUSES))
         select.select_by_value("1")
 
+    @allure.step
     def deactivate(self):
+        """Deactivating User"""
         select = Select(self._element(self.STATUSES))
         select.select_by_value("0")

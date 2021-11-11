@@ -1,3 +1,4 @@
+import allure
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 
@@ -14,6 +15,7 @@ class LoginPage(BasePage):
     ACCOUNT_LOGIN = (By.ID, "account-login")
     FOOTER =        (By.CSS_SELECTOR, "footer")
 
+    @allure.step
     def check_elements(self):
         self.wait.until(EC.visibility_of_element_located(self.SEARCH), "Search element is not located")
         self.wait.until(EC.visibility_of_element_located(self.CART), "Cart is not located")
