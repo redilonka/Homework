@@ -1,0 +1,20 @@
+version: '3'
+
+services:
+  opencart_e2e:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - .:/app
+    links:
+      - chrome-standalone
+      - firefox-standalone
+
+  chrome-standalone:
+    container_name: chrome-standalone
+    image: selenium/standalone-chrome
+
+  firefox-standalone:
+    container_name: firefox-standalone
+    image: selenium/standalone-firefox
