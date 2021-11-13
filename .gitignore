@@ -142,3 +142,6 @@ reports/
 
 # Screenshots
 screenshots/*.png
+
+# Scan reports
+*-scan.txt
