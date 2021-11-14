@@ -2,7 +2,7 @@ import os
 import re
 from datetime import datetime
 from collections import Counter, namedtuple
-from subprocess import Popen, PIPE, CompletedProcess
+from subprocess import Popen, PIPE, CompletedProcess, check_output
 
 
 class PSUXParser:
@@ -30,7 +30,14 @@ class PSUXParser:
 
     def __init__(self, output: CompletedProcess) -> None:
         self._result = "Empty"
-        self.mem_total = os.sysconf('SC_PAGE_SIZE') * os.sysconf('SC_PHYS_PAGES') / 1024 / 1024
+
+        try:
+            self.mem_total = os.sysconf('SC_PAGE_SIZE') * os.sysconf('SC_PHYS_PAGES') / 1024 / 1024
+        except ValueError:
+            out = check_output(['sysctl', 'hw.memsize'], universal_newlines=True)
+            hit = re.match(r'^hw.memsize: ([0-9]+)$', out)
+            self.mem_total = int(hit.group(1)) / 1024 / 1024
+
         self._users = None
         self._user_proccesses = None
         self._process_count = None
