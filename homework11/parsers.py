@@ -193,7 +193,7 @@ class AccessLogsParser(ParserInterface):
 
     # There are some redundant groups like refferer and time
     # It will add some time to procceed large log files but can be used in future
-    REQUEST_PATTERN = r'(?P<ip>^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}) - - \[(?P<time>.+)\] "(?P<details>(GET|POST|PUT|DELETE|HEAD|OPTIONS).+)" (?P<status>\d+) (?P<length>\d+) "(?P<refferer>.+)" ".+" (?P<request_time>\d+)'
+    REQUEST_PATTERN = r'^(?P<ip>\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}) - - \[(?P<time>.+)\] "(?P<details>(GET|POST|PUT|DELETE|HEAD|OPTIONS) .*)" (?P<status>.+) (?P<length>.+) "(?P<refferer>.*)" ".*" (?P<request_time>.+)'
 
     def __init__(self, completed_process: CompletedProcess) -> None:
         self._completed_process = completed_process
@@ -204,10 +204,12 @@ class AccessLogsParser(ParserInterface):
         self._long_requests = None
         self._output = ""
         self._output_json = {}
+        self._broken_log = 0
 
     def parse(self):
         self._result = []
         for raw in self._completed_process.stdout.read().decode("utf-8").split("\n"):
+            if not raw: continue
             if match := re.search(self.REQUEST_PATTERN, raw):
                 # POST /administrator/index.php HTTP/1.1 -> ['POST', '/administrator/index.php', 'HTTP/1.1']
                 details = match.groupdict()["details"].split(" ")
@@ -221,6 +223,8 @@ class AccessLogsParser(ParserInterface):
                     match.groupdict()["refferer"],  # Redundant item
                     int(match.groupdict()["request_time"]),
                 ])
+            else:
+                self._broken_log += 1
 
     def _collect_total_request_count(self):
         self._total_request_count = len(self._result)
@@ -270,7 +274,13 @@ class AccessLogsParser(ParserInterface):
             f"URL: {request[self.URL]} IP: {request[self.IP_ADDRESS]} Time: {request[self.REQUEST_TIME]/1000000} сек\n"
             for request in self._long_requests])
         self._output_json["long_requests"] = self._long_requests
+        self._output += "\n"
+        self._output += f"Сломанных записей: {self._broken_log}\n"
 
     def save(self):
-        with open(f"homework11/{datetime.now().strftime('%m-%d-%Y-%H:%M:%S')}-access-log-analysis.json", "w") as f:
+        filename = f"homework11/{datetime.now().strftime('%m-%d-%Y-%H:%M:%S')}-access-log-analysis.json"
+
+        with open(filename, "w") as f:
             json.dump(self._output_json, f, indent=4)
+            print(f"Сохранен json файл {filename}\n")
+

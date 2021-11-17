@@ -47,17 +47,16 @@ if __name__ == "__main__":
 
     access_file = str(args['access_file']) or None
 
-    cmd = ["cat"]
-
     if not access_file or access_file == "None":
         # For simplicity assume lall log files in a dir is apache2 log files
         log_files = [os.path.join(_dir, filename) for filename in
                      os.listdir(_dir) if re.match(r".+.log$", filename)]
-        cmd.extend(log_files)
     else:
-        cmd.append(access_file)
+        log_files = [access_file]
 
-    print(f"Following command is about to start: {' '.join(cmd)}")
+    for file in log_files:
+        _cmd = ["cat", file]
+        print(f"Following command is about to start: {' '.join(_cmd)}")
 
-    access = Analyzer(cmd=cmd, parser=AccessLogsParser)
-    access.run(save=bool(args["save"]))
+        access = Analyzer(cmd=_cmd, parser=AccessLogsParser)
+        access.run(save=bool(args["save"]))
