@@ -19,6 +19,7 @@ class PSUXParser:
     """
     USER = 0
     RAM = 3
+    RSS = 5
     PID = 1
     CPU = 2
     COMMAND = 10
@@ -52,7 +53,7 @@ class PSUXParser:
         self.resorce = namedtuple("Resource", ["name", "stat_target"])
 
         self.resources_no_analyze = (
-            self.resorce(self.RAM, "_most_mem_usage_process"),
+            self.resorce(self.RSS, "_most_mem_usage_process"),
             self.resorce(self.CPU, "_most_cpu_util_process"),
         )
 
@@ -100,7 +101,11 @@ class PSUXParser:
         ), 1)
 
     def _collect_resource_usage_process(self, resource, stat_target):
-        _resource_usage = 0
+        if self._result:
+            _resource_usage = float(self._result[0][resource])
+            setattr(self, stat_target, self._result[0][self.COMMAND])
+        else:
+            _resource_usage = 0
 
         for process in self._result:
             if float(process[resource]) > _resource_usage:
