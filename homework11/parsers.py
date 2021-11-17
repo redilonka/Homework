@@ -194,11 +194,12 @@ class AccessLogsParser(ParserInterface):
     # There are some redundant groups like refferer and time
     # It will add some time to procceed large log files but can be used in future
     REQUEST_PATTERN = r'^(?P<ip>\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}) - - \[(?P<time>.+)\] "(?P<details>(GET|POST|PUT|DELETE|HEAD|OPTIONS) .*)" (?P<status>.+) (?P<length>.+) "(?P<refferer>.*)" ".*" (?P<request_time>.+)'
+    PATTERN = r"^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3} .+"
 
     def __init__(self, completed_process: CompletedProcess) -> None:
         self._completed_process = completed_process
 
-        self._total_request_count = None
+        self._total_request_count = 0
         self._method_stats = None
         self._ip_stats = None
         self._long_requests = None
@@ -209,7 +210,12 @@ class AccessLogsParser(ParserInterface):
     def parse(self):
         self._result = []
         for raw in self._completed_process.stdout.read().decode("utf-8").split("\n"):
+
             if not raw: continue
+
+            if re.search(self.PATTERN, raw):
+                self._total_request_count += 1
+
             if match := re.search(self.REQUEST_PATTERN, raw):
                 # POST /administrator/index.php HTTP/1.1 -> ['POST', '/administrator/index.php', 'HTTP/1.1']
                 details = match.groupdict()["details"].split(" ")
@@ -226,9 +232,6 @@ class AccessLogsParser(ParserInterface):
             else:
                 self._broken_log += 1
 
-    def _collect_total_request_count(self):
-        self._total_request_count = len(self._result)
-
     def _collect_method_stats(self):
         self._method_stats = Counter([request[self.METHOD] for request in self._result])
 
@@ -240,7 +243,6 @@ class AccessLogsParser(ParserInterface):
         self._long_requests = self._result[:self.TOP_LONG_REQUEST_COUNT]
 
     def analyze(self):
-        self._collect_total_request_count()
         self._collect_method_stats()
         self._collect_ip_stats()
         self._collect_long_requests()

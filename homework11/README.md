@@ -113,7 +113,7 @@ URL: /administrator/ IP: 109.184.11.34 Time: 0.00789 сек
 Сохранен json файл homework11/11-18-2021-00:02:35-access-log-analysis.json
 
 Following command is about to start: cat ../access.log
-Общее количество выполненных запросов: 3216571
+Общее количество выполненных запросов: 3216980
 
 Количество запросов по типу: GET: 2247696, POST: 918794, HEAD: 49971, PUT: 70, OPTIONS: 39, DELETE: 1
 
