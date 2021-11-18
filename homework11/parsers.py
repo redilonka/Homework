@@ -206,6 +206,7 @@ class AccessLogsParser(ParserInterface):
         self._output = ""
         self._output_json = {}
         self._broken_log = 0
+        self._broken_log_list = []
 
     def parse(self):
         self._result = []
@@ -231,6 +232,7 @@ class AccessLogsParser(ParserInterface):
                 ])
             else:
                 self._broken_log += 1
+                self._broken_log_list.append(raw)
 
     def _collect_method_stats(self):
         self._method_stats = Counter([request[self.METHOD] for request in self._result])
@@ -242,10 +244,16 @@ class AccessLogsParser(ParserInterface):
         self._result.sort(key=lambda request: request[self.REQUEST_TIME], reverse=True)
         self._long_requests = self._result[:self.TOP_LONG_REQUEST_COUNT]
 
+    def _collect_broken_get_requests(self):
+        for raw in self._broken_log_list:
+            if re.search('"GET ', raw):
+                self._method_stats["GET"] += 1
+
     def analyze(self):
         self._collect_method_stats()
         self._collect_ip_stats()
         self._collect_long_requests()
+        self._collect_broken_get_requests()
 
         self._compile_output()
 
@@ -273,7 +281,7 @@ class AccessLogsParser(ParserInterface):
 
         self._output += f"Топ 3 самых долгих запросов: \n"
         self._output += "".join([
-            f"URL: {request[self.URL]} IP: {request[self.IP_ADDRESS]} Time: {request[self.REQUEST_TIME]/1000000} сек\n"
+            f"Method: {request[self.METHOD]} URL: {request[self.URL]} IP: {request[self.IP_ADDRESS]} Time: {request[self.REQUEST_TIME]/1000000} сек\n"
             for request in self._long_requests])
         self._output_json["long_requests"] = self._long_requests
         self._output += "\n"

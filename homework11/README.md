@@ -104,9 +104,9 @@ IP: 46.72.177.4: 2 запросов
 IP: 83.167.113.100: 2 запросов
 
 Топ 3 самых долгих запросов:
-URL: /administrator/index.php IP: 95.29.198.15 Time: 0.009865 сек
-URL: /administrator/index.php IP: 83.167.113.100 Time: 0.008566 сек
-URL: /administrator/ IP: 109.184.11.34 Time: 0.00789 сек
+Method: POST URL: /administrator/index.php IP: 95.29.198.15 Time: 0.009865 сек
+Method: POST URL: /administrator/index.php IP: 83.167.113.100 Time: 0.008566 сек
+Method: GET URL: /administrator/ IP: 109.184.11.34 Time: 0.00789 сек
 
 Сломанных записей: 1
 
@@ -115,7 +115,7 @@ URL: /administrator/ IP: 109.184.11.34 Time: 0.00789 сек
 Following command is about to start: cat ../access.log
 Общее количество выполненных запросов: 3216980
 
-Количество запросов по типу: GET: 2247696, POST: 918794, HEAD: 49971, PUT: 70, OPTIONS: 39, DELETE: 1
+Количество запросов по типу: GET: 2247848, POST: 918794, HEAD: 49971, PUT: 70, OPTIONS: 39, DELETE: 1
 
 Топ 3 IP адресов, с которых были сделаны запросы:
 IP: 193.106.31.130: 235209 запросов
@@ -123,9 +123,9 @@ IP: 198.50.156.189: 167812 запросов
 IP: 5.112.235.245: 166722 запросов
 
 Топ 3 самых долгих запросов:
-URL: /administrator/index.php IP: 62.93.172.245 Time: 0.01 сек
-URL: /media/system/css/modal.css IP: 213.162.68.113 Time: 0.01 сек
-URL: /images/phocagallery/almhuette/thumbs/phoca_thumb_m_terasse.jpg IP: 194.166.55.43 Time: 0.01 сек
+Method: POST URL: /administrator/index.php IP: 62.93.172.245 Time: 0.01 сек
+Method: GET URL: /media/system/css/modal.css IP: 213.162.68.113 Time: 0.01 сек
+Method: GET URL: /images/phocagallery/almhuette/thumbs/phoca_thumb_m_terasse.jpg IP: 194.166.55.43 Time: 0.01 сек
 
 Сломанных записей: 410
 
