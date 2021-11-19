@@ -145,3 +145,4 @@ screenshots/*.png
 
 # Scan reports
 *-scan.txt
+*-access-log-analysis.json
